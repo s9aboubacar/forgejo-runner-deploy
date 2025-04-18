@@ -16,6 +16,7 @@ jobs:
         run: |
           aws ec2 run-instances \
             --image-id ami-0c2b8ca1dad447f8a \  # Amazon Linux 2 in us-east-1
+            --count 1 \
             --instance-type t2.micro \
             --key-name forgejo-runner-key \
             --security-groups forgejo-runner-sg \
