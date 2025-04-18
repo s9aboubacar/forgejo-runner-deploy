@@ -26,17 +26,17 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-                - name: Log EC2 instance details
+      - name: Launch EC2 instance for Forgejo runner
         run: |
-          echo "Waiting 10 seconds for EC2 instance to initialize..."
-          sleep 10
-          echo "Describing instances tagged with Name=forgejo-runner"
-          aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=forgejo-runner" \
-            --region $AWS_REGION \
-            --output table
+          aws ec2 run-instances \
+            --image-id ami-0c2b8ca1dad447f8a \
+            --count 1 \
+            --instance-type t2.micro \
+            --key-name forgejo-runner-key \
+            --security-groups forgejo-runner-sg \
+            --iam-instance-profile Name=ForgejoRunnerRole \
+            --user-data file://bootstrap.sh \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=forgejo-runner}]'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
